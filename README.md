@@ -1,4 +1,4 @@
-# Click-Kill-Aliens
+# SpaceAlien-Killer
 Juego en Pygame de Matar Aliens Con El Ratón
 
 # Descripción
