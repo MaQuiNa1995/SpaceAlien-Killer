@@ -1,11 +1,12 @@
-import pygame,sys
-from pygame.locals import *
 from random import randint
 
-#Funciones
+import pygame, sys
+from pygame.locals import *
 
-# Salir De Luego
-def Salir(): 
+
+# Funciones
+# salir De Luego
+def salir(): 
 	pygame.quit()
 	sys.exit()
 
@@ -16,152 +17,149 @@ Puntos = 0
 
 # Cursor
 pygame.mouse.set_visible(False)
-# Pillar Posicion Actual Del Raton pygame.mouse.get_pos()
 
 # Teclas
-pygame.key.set_repeat(1,25)
+pygame.key.set_repeat(1, 25)
 
-#Musica
-pygame.mixer.music.load("Musica/Cruzifi.mp3")
+# Musica
+pygame.mixer.music.load("Mat/Back_to_the_volcano_castle.mp3")
 pygame.mixer.music.play(1)
 pygame.mixer.music.set_volume(0.10)
 
-# Reloj
-Fps = 20
-Reloj = pygame.time.Clock()
+# reloj
+fps = 60
+reloj = pygame.time.Clock()
 
-# Ventana
-Ventana = pygame.display.set_mode([500, 500])
+# ventana
+ventana = pygame.display.set_mode([1920, 1080])
 pygame.display.set_caption("Shoot The Aliens")
-Fondo = pygame.image.load('Mat/Fondo_Espacial.png')
-Color_Ventana = (0,0,0)
-Menu = (100,230,90)
+fondo = pygame.image.load('Mat/Fondo_Espacial.png')
+color = (0, 0, 0)
+menu = (100, 230, 90)
 
 # Mirilla_Jugador
-Mirilla = pygame.image.load('Mat/Mirilla2.png')
-Rect_Mirilla = Mirilla.get_rect()
+mirilla = pygame.image.load('Mat/Mirilla.png')
+rect_mirilla = mirilla.get_rect()
 
 # Pause / Play
-Repro = pygame.image.load('Mat/Play.png')
-Rect_Repro = Repro.get_rect()
+play = pygame.image.load('Mat/Play.png')
+rect_play = play.get_rect()
 
-Pausa = pygame.image.load('Mat/Pause.png')
-Rect_Pausa = Pausa.get_rect()
+pause = pygame.image.load('Mat/Pause.png')
+rect_pause = pause.get_rect()
 
-Rect_Pausa.center = (485,485)
-Rect_Repro.center = (485,485)
+rect_pause.center = (1900, 1050)
+rect_play.center = (1850, 1050)
 
-Reproducir = False
-Musica_Ocupada = False
-Click = False
+num_marcianos = 0
 
-#Num_Marcianos=raw_input("Introduce Un Numero De Aliens Para Matar:")
+# num_marcianos = 7 #input("Introduce Un Numero De Aliens Para Matar:")
 
 # Texto En Pantalla
-Text = "5 Aliens Desplegados En La Galaxia, Pulsa Arriba Para Salvar La Tierra" 
-fuente = pygame.font.Font(None, 20)
-mensaje = fuente.render(Text, 1, (255, 255, 255))
+text = "Introduce un Número de Aliens a Combatir"
+fuente = pygame.font.Font(None, 30)
+mensaje = fuente.render(text, 1, (255, 255, 255))
 
+# Loop Del menu Del Juego
+seguir = False
+while seguir == False:
 
-# Loop Del Menu Del Juego
-Seguir = False
-while Seguir == False:
-
-	Ventana.fill(Color_Ventana)
-	Ventana.blit(mensaje, (50, 250))
-
-	for event in pygame.event.get():	
+	ventana.fill(color)
+	
+	if num_marcianos == 0:
+		ventana.blit(mensaje, (700, 540))
+	else:
+		text2 = str(num_marcianos) + " Aliens Desplegados En La Galaxia Pulsa Arriba Para Salvar La Tierra"
+		mensaje2 = fuente.render(text2, 1, (255, 255, 255))
+		ventana.blit(mensaje2, (700, 540))
 		
-        	if event.type == pygame.QUIT:
-                	Salir()
-
-		elif event.type==KEYDOWN:
-			if event.key==K_UP:
-				Seguir = True
-
-                        elif event.key==K_ESCAPE:
-                                Salir()
+	for event in pygame.event.get():
+		
+		if event.type == pygame.QUIT:
+			salir()
+	
+		elif event.type == KEYDOWN:
+			if (num_marcianos == 0 and (event.key == K_1
+				or event.key == K_2 or event.key == K_3
+				or event.key == K_4 or event.key == K_5
+				or event.key == K_6 or event.key == K_7
+				or event.key == K_8 or event.key == K_9)):
+				num_marcianos = event.key - 48
+				
+			if event.key == K_UP:
+				seguir = True
+			elif event.key == K_ESCAPE:
+				salir()
+                    
 	pygame.display.update()
-	Reloj.tick(Fps)
+	reloj.tick(fps)
 
 # Enemigos
-Contador_Aliens = 0
-Num_Marcianos = 5
+contador_aliens = 0
 
 # Arrays Enemigos
 Alien = { }
 Rect_Alien = { }
 Alien_Visible = { }
 
-for i in range(0,Num_Marcianos):
-	Alien[i] = pygame.image.load('Mat/Alien_Invader2.png')
+for i in range(0, num_marcianos):
+	Alien[i] = pygame.image.load('Mat/Alien_Invader.png')
 	Rect_Alien[i] = Alien[i].get_rect()
 	Alien_Visible[i] = True
-	Rect_Alien[i].left = randint(50,450)
-	Rect_Alien[i].top = randint(50,450)
+	Rect_Alien[i].left = randint(50, 1900)
+	Rect_Alien[i].top = randint(50, 1000)
 
 # Loop Principal Del Juego
 pygame.mouse.set_visible(False)
 
 while True:
 
-	if Puntos > Num_Marcianos-1:
+	if Puntos > num_marcianos - 1:
 		print("Has Ganado ;)")
-		Salir()
+		salir()
 
-	Rect_Mirilla.center = pygame.mouse.get_pos()
+	rect_mirilla.center = pygame.mouse.get_pos()
 
-	Ventana.fill(Color_Ventana)
-	Ventana.blit(Fondo,(0,0))
+	ventana.fill(color)
+	ventana.blit(fondo, (0, 0))
 
-	if Reproducir == True:
-		Ventana.blit(Repro, Rect_Repro)
-	else:
-		Ventana.blit(Pausa, Rect_Pausa)
+	ventana.blit(play, rect_play)
+	ventana.blit(pause, rect_pause)
 
-	for i in range(0,Num_Marcianos):
+	for i in range(0, num_marcianos):
 		if Alien_Visible[i] == True:
-			Ventana.blit(Alien[i], Rect_Alien[i])
+			Rect_Alien[i].left = Rect_Alien[i].left + 2
+			if Rect_Alien[i].left > 1900:
+				Rect_Alien[i].left = 20
+			
+			ventana.blit(Alien[i], Rect_Alien[i])
 		
-	Ventana.blit(Mirilla, Rect_Mirilla)
-	
-#	if Rect_Pausa.collidepoint(Rect_Mirilla.center) or Rect_Repro.collidepoint(Rect_Mirilla.center) and Click == False:
-#		Click = True
+	ventana.blit(mirilla, rect_mirilla)
 
 	for event in pygame.event.get():
-
-        	if event.type == pygame.QUIT:
-                	Salir()
-
-
-		elif event.type==pygame.MOUSEBUTTONDOWN:
-
-			#if Reproducir == False and Musica_Ocupada == False:
-			if Reproducir == False and Rect_Pausa.collidepoint(pygame.mouse.get_pos()) == True:
-				pygame.mixer.music.play(1)
-				pygame.mixer.music.set_volume(0.10)
-				Reproducir = True
-
-			if Reproducir == True and Rect_Repro.collidepoint(pygame.mouse.get_pos()) == True:
-				Reproducir = False
-				pygame.mixer.music.stop()
-
-			for i in range(0,Num_Marcianos):
-				if Rect_Alien[i].collidepoint(pygame.mouse.get_pos()) == True and Alien_Visible[i] == True:
-					Contador_Aliens = Contador_Aliens + 1
-            				print "Has Eliminado:",Contador_Aliens ,"Aliens !!"
-					Alien_Visible[i] = False
-					Puntos = Puntos + 1
-
-                elif event.type==KEYDOWN:
-			if event.key==K_p:
-				pygame.mixer.music.stop()
-
-                        elif event.key==K_ESCAPE:
-                                Salir()
-
-	
+			if event.type == pygame.QUIT:
+	        		salir()
+	        	
+			if event.type == pygame.MOUSEBUTTONDOWN:
+					if rect_pause.collidepoint(pygame.mouse.get_pos()) == True:
+						pygame.mixer.music.pause()
+					
+					if rect_play.collidepoint(pygame.mouse.get_pos()) == True:
+						pygame.mixer.music.unpause()
+				
+					for i in range(0, num_marcianos):
+							if Rect_Alien[i].collidepoint(pygame.mouse.get_pos()) == True and Alien_Visible[i] == True:
+								contador_aliens = contador_aliens + 1
+								Alien_Visible[i] = False
+								Puntos = Puntos + 1
+								print("Has Eliminado:" , contador_aliens , "Aliens !!")
+								
+			elif event.type == KEYDOWN:
+				if event.key == K_p:
+					pygame.mixer.music.pause()
+				elif event.key == K_ESCAPE:
+					salir()
+					
 	pygame.display.update()
-	Reloj.tick(Fps)
-
+	reloj.tick(fps)
 
